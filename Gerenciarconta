@@ -1,0 +1,541 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.print.DocFlavor;
+import javax.swing.JOptionPane;
+
+
+public class Conta {
+    
+    
+    
+    public static GerenciarConta[] cadastro = new GerenciarConta[50];
+    static int cont = 0;
+    
+    
+    
+   public Conta(){
+       
+       for(int i = 0; i <= 50; i++){
+           cadastro[i] = new GerenciarConta();
+       }
+       
+   }
+    
+    public static void inserirConta (String nome, double saldo){
+        
+        cadastro[cont] = new GerenciarConta(nome, saldo); 
+    }
+    
+    public static void inserirLancamentoReceita(double valor, int pos, String data){
+        
+        cadastro[pos].lancamentoReceita = new LancamentoReceita(data, valor);
+        cadastro[pos].setSaldo_conta(cadastro[pos].Saldo_conta + valor);
+        
+        
+    }
+   
+    public static void inserirLancamentoDespesa(double valor, int pos, String data){
+    
+        cadastro[pos].lancamentoDespesa = new LancamentoDespesa(data, valor);
+        cadastro[pos].setSaldo_conta(cadastro[pos].Saldo_conta - valor);
+    
+    }
+    /*
+    public static void inserirCategoriaReceita(String nome, String sub){
+        
+        
+        cadastro[cont].lancamentoReceita.categoriaReceita = new CategoriaReceita(nome, sub);
+        
+       
+    }
+    
+    
+    public static void inserirCategoriaDespesa(String nome, String sub){
+    
+        CategoriaDespesa CD = new CategoriaDespesa();
+        CD.setNome_CategoriaDespesa(nome);
+        CD.setSub_CategoriaDespesa(sub);
+        
+    }
+    */
+    
+    public static void transferencia(int pos1, int pos2, double valor, String data){
+    
+        inserirLancamentoDespesa(valor, pos1, data);
+        inserirLancamentoReceita(valor, pos2, data);
+    
+    }
+    
+    public static int buscarConta(String nome){
+    
+        int resp = -1;
+        
+        for(int i = 0; i < cont; i++){
+            
+            if(cadastro[i].Nome_conta.equals(nome)){
+                
+                resp = i;
+               
+            }
+        }
+        
+        return resp;
+    
+    }
+    
+    public static void exibirPorData(String data){
+         System.out.println("Exibição de todas as receita por data:");
+        for(int i = 0; i<=cont; i++){
+           
+            if(cadastro[i].lancamentoReceita.Data.equals(data)){
+                System.out.println("Valor: "+cadastro[i].lancamentoReceita.valor_conta + " - Data de lançamento:" + cadastro[i].lancamentoReceita.Data + "");
+            }
+        }
+    
+    }
+    
+    public static void exibirPorCategoria(String Nome_cat){///////////////////////////////////////////PROCURAR POR CATEGORIA MÈTODO
+        
+    }
+    
+   public static void exibirPorPeriodo(){
+    
+        
+    
+    }
+   
+   public static String procurarPorData(String datain, String datafim){
+       String resp = "";
+       
+     
+       
+       return resp;
+   }
+    
+    public static String Data() {
+        DateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
+        Date data = new Date();
+        return DF.format(data);
+    }
+
+
+
+    
+    public static void main(String[] args) throws IOException {
+        
+       BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+       
+       String x;
+       int select = 0;
+       
+      
+        System.out.println("Selecione: ");
+        System.out.println("1 - Para inserir: ");
+        System.out.println("2 - Para alterar: ");
+        System.out.println("3 - Para transferencias: ");
+        System.out.println("4 - Para exibir: ");
+        
+        try{
+         System.out.print("Digite: ");
+        x = bf.readLine();
+        select = Integer.parseInt(x);
+        
+        }catch(Exception e){
+            System.out.println("O valor digitado nao é válido. Digite novamente!!!");
+            System.out.println("Pressione enter para continuar!");
+            System.in.read();
+            main(args);
+        }
+       
+      
+      
+       
+       
+       switch(select){
+           
+               case 1:
+                 
+                    
+                    String conta = ""; double saldo = 0;
+
+                    System.out.println("Digite o nome da conta: ");
+                    conta = bf.readLine();
+
+                    System.out.println("Digite o saldo da conta: ");
+                    saldo = bf.read();
+                    
+                    inserirConta(conta, saldo);
+                    cont++;
+                   
+                     System.out.println("Conta inserida com sucesso! Para inserir lançamentos vá ao menu Alterar");
+                    System.out.println("Pressione enter para continuar...");
+                    System.in.read();
+                   
+                    main(args);
+                    
+               break;
+
+               case 2:
+                    
+                    String a;
+                    int valor = 0;
+                   
+                    String nome;
+                    System.out.print("Digite o nome da conta que deseja alterar: ");
+                    nome = bf.readLine();
+                    int pos = buscarConta(nome);
+                   
+                    if(pos == -1){
+                        System.out.println("Conta nao encontrada!!!");
+                        main(args);
+                    }else{
+                   
+                        
+
+                        System.out.println("Selecione: ");
+                        System.out.println("1 - Para inserir receita: ");
+                        System.out.println("2 - Para inserir despesa: ");
+
+                        try{
+                         System.out.print("Digite: ");
+                         a = bf.readLine();
+                         valor = Integer.parseInt(a);
+
+                        }catch(Exception e){
+                            System.out.println("O valor digitado nao é válido. Digite novamente!!!");
+                            System.out.println("Pressione enter para continuar!");
+                            System.in.read();
+
+                        }
+
+                        switch(valor){
+                            case 1:
+
+                                
+                                System.out.print("Digite o valor da receita: ");
+                                String recstring = bf.readLine();
+                                double receita = Double.parseDouble(recstring);
+                                
+                                String data_Rec;
+                                System.out.println("Digite a data de lançamento da receita: ");
+                                data_Rec = bf.readLine();
+                                inserirLancamentoReceita(receita, pos, data_Rec);
+                                
+                               
+                                //inserirCategoriaReceita //--------------------------------------------->>>>>>> NAO TÁ FEITO AINDA
+                                
+                                System.out.println("Receita inserida com sucesso!");
+                                System.out.println("Pressione enter para continuar...");
+                                System.in.read();
+                                
+                                main(args);
+
+                            break;
+                            case 2:
+                                
+                                System.out.print("Digite o valor da despesa: ");
+                                String despString = bf.readLine();
+                                double despesa = Double.parseDouble(despString);
+                                
+                                String data_Des;
+                                System.out.println("Digite a data de lançamento da despesa: ");
+                                data_Des = bf.readLine();
+                                inserirLancamentoDespesa(despesa, pos, data_Des);
+                                
+                                //inserirCategoriaDespesa //-------------------------------------------->>>>>>> NAO TÁ FEITO AINDA
+                                
+                                System.out.println("Despesa inserida com sucesso!");
+                                System.out.println("Pressione enter para continuar...");
+                                System.in.read();
+                                
+                                main(args);
+
+                            break;
+                        }
+                   }
+
+                   break;
+
+                   case 3:
+                       String remetente, destinatario, valor_transfStr, data_transfStr;
+                       int posRem, posDest, valor_transf;
+                       
+                       System.out.println("Digite o nome da conta remetente (que envia o valor)");
+                       remetente = bf.readLine();
+                       posRem = buscarConta(remetente);
+                       
+                       System.out.println("Digite o nome da conta destinatária (que recebe o valor)");
+                       destinatario = bf.readLine();
+                       posDest = buscarConta(destinatario);
+                       
+                       System.out.println("Digite o valor a ser enviado");
+                       valor_transfStr = bf.readLine();
+                       valor_transf = Integer.parseInt(valor_transfStr);
+                       
+                       System.out.println("Digite a data da transferência");
+                       data_transfStr = bf.readLine();
+                       valor_transf = Integer.parseInt(valor_transfStr);
+                       transferencia(posRem, posDest, valor_transf, data_transfStr);
+                       
+                   break;
+
+                   case 4:
+                        int opcao = 0;
+                        String op;
+                       
+                        System.out.println("Selecione: ");
+                        System.out.println("1 - Exibir todos os lançamentos ordenados por Data: ");// Feito com data inserida pelo usuário
+                        System.out.println("2 - Exibir lançamentos por Categoria: ");// FAZER INSERIR CATEGORIA PRIMEIRO
+                        System.out.println("3 - Exibir lançamentos por Periodo (*Ex: 01/01/2013 até 30/03/2013*): ");
+                        System.out.println("4 - Exibir lançamentos por tipo (*receita ou despesa*): ");
+                        
+                        
+                        try{
+                            System.out.print("Digite: ");
+                           op = bf.readLine();
+                           opcao = Integer.parseInt(op);
+
+                           }catch(Exception e){
+                               System.out.println("O valor digitado nao é válido. Digite novamente!!!");
+                               System.out.println("Pressione enter para continuar!");
+                               System.in.read();
+                               main(args);
+                           }
+                        
+                        switch(opcao){
+                       
+                            case 1:
+                                String DataExibir;
+                                
+                                System.out.println("Digite a data que procura");
+                                DataExibir = bf.readLine();
+                                
+                                exibirPorData(DataExibir);
+                                
+                                System.out.println("Pressione enter para continuar!");
+                                System.in.read();
+                                
+                            break;
+                            
+                            case 2:///////////////////////////////////////////////////////////////////PROCURAR POR CATEGORIA
+                                
+                                String CatExibir;
+                                
+                                System.out.println("Digite o nome da categoria");
+                                CatExibir = bf.readLine();
+                                
+                                
+                            break;
+                            
+                            case 3:////////////////////////////////////////////PROCURAR POR PERIODO
+                                
+                                String datain, datafim;
+                                
+                                System.out.print("Digite a data inicial desejada: ");
+                                datain = bf.readLine();
+                                
+                                System.out.print("Digite a data final desejada: ");
+                                datafim = bf.readLine();
+                                
+                                
+                            break;
+                                
+                            case 4:
+                            break;
+                                                            
+                        }
+                       
+                   break;
+
+                   
+
+            
+       }
+    }
+}
+
+//########################################################################
+class GerenciarConta{
+    
+    String Nome_conta;
+    double Saldo_conta;
+    LancamentoReceita lancamentoReceita;
+    LancamentoDespesa lancamentoDespesa;
+    
+    public GerenciarConta(){
+        this.Nome_conta = "";
+        this.Saldo_conta = 0;
+    }
+    
+    public GerenciarConta(String nome, double saldo){
+        this.Nome_conta = nome;
+        this.Saldo_conta = saldo;
+    }
+    
+    public void setNome_conta (String nome){
+        this.Nome_conta = nome;
+    }
+    
+    public String getNome_conta (){
+        return Nome_conta;
+    }
+    
+    public void setSaldo_conta (double valor){
+        this.Saldo_conta = valor;
+    }
+    
+    public double getSaldo_conta (){
+        return Saldo_conta;
+    }
+    
+}
+
+//########################################################################
+class LancamentoReceita{
+    String Data;
+    double valor_conta;
+    CategoriaReceita categoriaReceita;
+    
+    
+    public LancamentoReceita(){
+        this.Data = "";
+        this.valor_conta = 0;
+        
+    }
+    
+    public LancamentoReceita(String data, double valor){
+        this.Data = data;
+        this.valor_conta = valor;
+        
+    }
+    
+     public void setDataReceita (String data){
+        this.Data = data;
+    }
+    
+    public String getDataReceita (){
+        return this.Data;
+    }
+    
+    public void setValor_contaReceita (double valor){
+        this.valor_conta = valor;
+    }
+    
+    public double getValor_contaReceita (){
+        return this.valor_conta;
+    }
+    
+    public void setData_contaReceita(String data){
+        this.Data = data;
+    }
+    
+    public String getData_contaReceita(){
+        return this.Data;
+    }
+    
+}
+
+//######################################################################
+
+class LancamentoDespesa{
+    String data;
+    double valor_conta;
+    CategoriaDespesa categoriaDespesa;
+    
+    public LancamentoDespesa(){
+        this.data = "";
+        this.valor_conta = 0;
+    }
+
+    public LancamentoDespesa(String Data, double valor) {
+        this.data = data;
+        this.valor_conta = valor;
+    }
+    
+     public void setDataDespesa (String data){
+        this.data = data;
+    }
+    
+    public String getDataDespesa (){
+        return this.data;
+    }
+    
+    public void setValor_contaDespesa (double valor){
+        this.valor_conta = valor;
+    }
+    
+    public double getValor_contaDespesa (){
+        return this.valor_conta;
+    }
+    
+    public void setData_contaReceita(String data){
+        this.data = data;
+    }
+    
+    public String getData_contaReceita(){
+        return this.data;
+    }
+}
+
+//######################################################################
+
+class CategoriaReceita{
+    String Nome_CategoriaReceita, Sub_CategoriaReceita;
+    
+    public CategoriaReceita(){
+        this.Nome_CategoriaReceita = "";
+        this.Sub_CategoriaReceita = "";
+    }
+    
+   public CategoriaReceita(String nome, String sub){
+       this.Nome_CategoriaReceita = nome;
+       this.Sub_CategoriaReceita = sub;
+   }
+    
+     public void setNome_CategoriaReceita (String nome){
+        this.Nome_CategoriaReceita = nome;
+    }
+    
+    public String getNome_CategoriaReceita (){
+        return this.Nome_CategoriaReceita;
+    }
+    
+    public void setSub_CategoriaReceita (String nome){
+        this.Sub_CategoriaReceita = nome;
+    }
+    
+    public String getSub_CategoriaReceita (){
+        return this.Sub_CategoriaReceita;
+    }
+}
+//######################################################################
+
+class CategoriaDespesa{
+    String Nome_CategoriaDespesa, Sub_CategoriaDespesa;
+    
+    public CategoriaDespesa(){
+        this.Nome_CategoriaDespesa = "";
+        this.Sub_CategoriaDespesa = "";
+    }
+    
+     public void setNome_CategoriaDespesa (String nome){
+        this.Nome_CategoriaDespesa = nome;
+    }
+    
+    public String getNome_CategoriaDespesa (){
+        return this.Nome_CategoriaDespesa;
+    }
+    
+    public void setSub_CategoriaDespesa (String nome){
+        this.Sub_CategoriaDespesa = nome;
+    }
+    
+    public String getSub_CategoriaDespesa (){
+        return this.Sub_CategoriaDespesa;
+    }
+}
